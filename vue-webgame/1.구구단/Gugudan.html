@@ -1,0 +1,105 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>구구단</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="root">
+    <!-- Vue의 인스턴스가 연결될 DOM 요소입니다. 이 요소와 하위 요소들이 Vue 데이터와 동작에 의해 동적으로 업데이트됩니다. -->
+    <div>{{first}}곱하기 {{second}}는?</div>
+    <!-- 폼 제출 이벤트를 onSubmitForm 메서드에 바인딩합니다. Vue의 디렉티브 v-on을 사용하며, submit 이벤트가 발생할 때 실행됩니다. -->
+    <form v-on:submit="onSubmitForm">
+        <!-- v-model: Vue의 양방향 데이터 바인딩을 사용해 입력된 값을 value 속성과 연결합니다.
+            ref="answer": 이 입력 필드를 참조하기 위해 answer라는 참조를 설정합니다. -->
+        <input type="number" ref="answer" v-model="value">
+        <button type="submit">입력</button>
+    </form>
+    <div id="result">{{result}}</div>
+    <div>점수: {{score}}</div>
+    <div>남은 시간: {{timeRemaining}}초</div>
+    <div>난이도: {{difficulty}}</div>
+</div>
+<script>
+    const app = new Vue({
+        el: '#root',                                // id="root"인 DOM 요소에 Vue 인스턴스를 연결합니다.
+        data: {                                     // Vue의 반응형 데이터입니다.
+            first: Math.ceil(Math.random() * 9),
+            second: Math.ceil(Math.random() * 9),
+            value: '',                                // 사용자가 입력한 답안 값.
+            result: '',                               // 정답 또는 틀림 여부를 표시하는 메시지.
+            score: 0,                                 // 점수
+            timeRemaining: 10,                        // 남은 시간 (초)
+            difficulty: 1,                            // 난이도 레벨
+            timer: null                               // 타이머 ID
+        },
+        methods: {
+            onSubmitForm(e) {                         // 폼이 제출되었을 때 호출됩니다.
+                e.preventDefault();                   // 폼 제출로 인해 페이지가 새로고침 되는 기본 동작을 방지합니다.
+
+                const correctAnswer = this.first * this.second; // 정답 계산
+
+                if (parseInt(this.value) === correctAnswer) { // 사용자가 입력한 값(value)을 숫자로 변환 후 정답 여부를 검사합니다.
+                    this.result = '정답!';
+                    this.score += 1;                    // 정답 시 점수 추가
+                    this.increaseDifficulty();          // 난이도 조절
+                    this.generateNewProblem();          // 새로운 문제 생성
+                } else {
+                    this.result = '땡!';
+                    this.resetTimer();                  // 시간이 초기화됨
+                }
+
+                this.value = '';                        // 입력 창 초기화
+
+                // ref="answer"로 설정된 입력 창에 포커스를 다시 맞춥니다. this.$refs.answer는 해당 DOM 요소를 참조합니다.
+                this.$refs.answer.focus(); // 입력 창에 포커스
+            },
+
+            // 새로운 문제를 생성
+            generateNewProblem() {
+                this.first = Math.ceil(Math.random() * this.difficulty * 9); // 난이도에 따라 범위 증가
+                this.second = Math.ceil(Math.random() * this.difficulty * 9);
+                this.resetTimer(); // 타이머 초기화
+            },
+
+            /**
+             * 점수에 따라 난이도 조절
+             * - 점수가 5점, 10점 등 특정 구간에 도달하면 곱셈 범위가 늘어나 난이도가 자동으로 상승합니다.
+             * - 곱셈 범위는 난이도와 곱해져 증가합니다.
+             * */
+            increaseDifficulty() {
+                if (this.score % 5 === 0) { // 점수가 5점 단위로 증가할 때 난이도 증가
+                    this.difficulty += 1;
+                }
+            },
+
+            // 타이머 초기화 및 시작
+            resetTimer() {
+                clearInterval(this.timer); // 기존 타이머 정지
+                this.timeRemaining = 10; // 남은 시간 초기화
+                this.startTimer(); // 새로운 타이머 시작
+            },
+
+            // 타이머 시작
+            startTimer() {
+                this.timer = setInterval(() => {
+                    this.timeRemaining -= 1; // 1초씩 감소
+
+                    if (this.timeRemaining <= 0) {
+                        clearInterval(this.timer); // 타이머 정지
+                        this.result = '시간 초과! 다음 문제로 넘어갑니다.';
+                        this.generateNewProblem(); // 새로운 문제 생성(다음 문제로 이동)
+                    }
+                }, 1000);
+            }
+        },
+        mounted() {
+            this.startTimer(); // Vue 인스턴스가 마운트되면 타이머 시작
+        }
+    });
+</script>
+</body>
+</html>

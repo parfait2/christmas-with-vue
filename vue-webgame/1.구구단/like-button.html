@@ -1,0 +1,65 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>좋아요</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="root"> <!-- Vue.js 애플리케이션이 연결될 HTML 요소입니다. Vue 인스턴스의 el 속성에 연결됩니다. -->
+    <!-- Vue.js의 디렉티브로, liked 값이 true일 때 <div>가 렌더링됩니다.
+        즉, 사용자가 좋아요 버튼을 클릭한 상태일 때 "좋아요 눌렀음"이 표시됩니다. -->
+    <div v-if="liked">좋아요 눌렀음</div>
+
+    <!-- v-if와 함께 사용되어 조건이 거짓(false)일 경우에만 렌더링됩니다.
+        liked 값이 false일 때만 버튼이 표시됩니다. -->
+    <!-- 클릭 이벤트를 바인딩합니다. 버튼을 클릭하면 Vue 인스턴스의 onClickButton 메서드가 실행됩니다. -->
+    <button v-else v-on:click="onClickButton">Like</button>
+    <div>
+        <button v-on:click="toggleLike">{{ liked ? '좋아요 취소' : 'Like' }}</button>
+        <p>좋아요 횟수: {{ likeCount }}</p>
+    </div>
+</div>
+</body>
+<script>
+    const app = new Vue({
+        /**
+         * Vue 인스턴스가 id="root"인 요소에 연결됩니다.
+         * 이 요소와 그 내부의 HTML 요소들은 Vue.js의 데이터 및 메서드로 동적으로 업데이트됩니다.
+         * */
+        el: '#root',
+        /**
+         * Vue.js에서 관리하는 상태(state)를 정의합니다.
+         * liked: Boolean 값으로, 좋아요 버튼이 눌렸는지의 상태를 나타냅니다. 기본값은 false입니다.
+         * */
+        data: {
+            liked: false,
+            likeCount: 0, // 좋아요 횟수
+        },
+        methods: { // Vue.js에서 정의한 메서드를 포함합니다.
+            /**
+             * 버튼을 클릭하면 실행되는 메서드입니다.
+             * this.liked = true로 상태를 업데이트하여 liked 값을 true로 변경합니다.
+             * liked가 변경되면 Vue가 이를 감지하고 화면을 다시 렌더링합니다(좋아요 눌렀음 메시지가 나타나고 버튼이 사라짐).
+             * */
+            onClickButton() {
+                this.liked = true;
+            },
+
+            toggleLike() {
+                if (this.liked) {
+                    // 좋아요 취소
+                    this.likeCount--;
+                } else {
+                    // 좋아요 추가
+                    this.likeCount++;
+                }
+                this.liked = !this.liked; // 좋아요 상태 토글
+            },
+        },
+    });
+</script>
+</html>

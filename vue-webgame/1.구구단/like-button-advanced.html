@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>좋아요</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="root">
+    <div>
+        <p v-if="liked">좋아요 눌렀음</p>
+        <button :disabled="loading" v-on:click="toggleLike">
+            {{ liked ? '좋아요 취소' : 'Like' }}
+        </button>
+        <p>좋아요 횟수: {{ likeCount }}</p>
+        <p>전체 좋아요 횟수: {{ totalLikeCount }}</p>
+    </div>
+</div>
+</body>
+<script>
+    const baseURL = 'http://localhost:3000';
+
+    const app = new Vue({
+        el: '#root',
+        data: {
+            liked: false,           // 현재 사용자의 좋아요 상태
+            likeCount: 0,          // 현재 사용자의 좋아요 횟수
+            totalLikeCount: 0,     // 전체 유저의 총 좋아요 횟수
+            loading: false,        // 버튼 클릭 중 로딩 상태, loading 상태 변수를 사용하여 버튼 클릭 중에는 추가 요청을 막습니다.
+        },
+        methods: {
+            // created 라이프사이클 훅에서 앱이 로드될 때 fetchTotalLikes를 호출합니다:
+            async fetchTotalLikes() {
+                try {
+                    const response = await axios.get(`${baseURL}/api/total-likes`);
+                    this.totalLikeCount = response.data.totalLikes;
+                } catch (error) {
+                    console.error('전체 좋아요 데이터를 가져오는 데 실패했습니다:', error);
+                }
+            },
+            async toggleLike() {
+                if (this.loading) return; // 로딩 중이면 아무 동작도 하지 않음
+
+                this.loading = true; // 로딩 상태 활성화
+                try {
+                    if (this.liked) {
+                        // 좋아요 취소 요청
+                        const response = await axios.post(`${baseURL}/api/unlike`, { userId: 1 });
+                        if (response.data.success) {
+                            this.likeCount--;
+                            this.totalLikeCount = response.data.totalLikes; // 서버에서 동기화된 전체 카운트 업데이트
+                            this.liked = false;
+                        }
+                    } else {
+                        // 좋아요 요청
+                        const response = await axios.post(`${baseURL}/api/like`, { userId: 1 });
+                        if (response.data.success) {
+                            this.likeCount++;
+                            this.totalLikeCount = response.data.totalLikes; // 서버에서 동기화된 전체 카운트 업데이트
+                            this.liked = true;
+                        }
+                    }
+                } catch (error) {
+                    console.error('좋아요 동작 중 에러 발생:', error);
+                } finally {
+                    this.loading = false; // 로딩 상태 비활성화
+                }
+            },
+        },
+        async created() {
+            // 초기화 시 전체 좋아요 데이터 가져오기
+            await this.fetchTotalLikes();
+        },
+    });
+</script>
+</html>
