@@ -1,8 +1,13 @@
 # 🎄 Christmas with Vue 🎅  
 An advent calendar of Vue.js filled with joy, holiday vibes, and commits!
 
+Check my daily progress through the Notion link :) [☃️ Vue.js Challenge yerinpark-dev Notion Link](https://yerinpark-dev.notion.site/Vue-js-14f7d9362c8f80ef9b39d8bd2f92cbf5?pvs=4) 
+
+---
+
 ## ✨ About This Repository  
 Christmas with Vue는 Vue.js 학습을 위한 레포지토리입니다.
+
 2024년 12월 한 달간 매일 어드밴트 캘린더를 여는 설레는 마음으로 커밋할 예정입니다.
 
 ---
