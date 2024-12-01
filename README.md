@@ -20,13 +20,13 @@ Christmas with Vue는 Vue.js 학습을 위한 레포지토리입니다.
 ---
 
 ## 🎯 Reference in This Repository
-https://ko.vuejs.org/
+🗂️ [Vue.js 공식 문서](https://ko.vuejs.org/)
 
-https://www.inflearn.com/course/web-game-vue
+📗 [Vue.js 인프런 제로초 님 강의](https://www.inflearn.com/course/web-game-vue)
 
-https://github.com/ZeroCho/vue-webgame
+🍏 [Vue.js 인프런 제로초 님 강의 GitHub Repository](https://github.com/ZeroCho/vue-webgame)
 
-https://github.com/ParkYoungWoong/11st-vue-app?tab=readme-ov-file
+🍎 [Vue.js 패스트캠퍼스 박영웅 님 강의 GitHub Repository](https://github.com/ParkYoungWoong/11st-vue-app?tab=readme-ov-file)
 
 
 ---
@@ -52,9 +52,9 @@ https://github.com/ParkYoungWoong/11st-vue-app?tab=readme-ov-file
 ---
 
 ## 🌟 Why This Project?  
-This repository is my year-end challenge to:
-- Wrap up 2024 by mastering Vue.js.
-- Build a portfolio showcasing my Vue.js skills.
+This repository is my year-end challenge to
+- Wrap up 2024 by learning Vue.js.
+- Build my Vue.js skills.
 - Stay consistent with daily progress, one commit at a time!
 
 ---
@@ -66,4 +66,5 @@ Feel free to contact! If you have suggestions or ideas, open an issue or create 
 
 ## 📅 Progress Tracker  
 Follow my daily progress through the Notion link below🏃‍♀️
-https://yerinpark-dev.notion.site/Vue-js-14f7d9362c8f80ef9b39d8bd2f92cbf5?pvs=4
+
+[Vue.js 챌린지 yerinpark-dev 노션 링크📋](https://yerinpark-dev.notion.site/Vue-js-14f7d9362c8f80ef9b39d8bd2f92cbf5?pvs=4)
