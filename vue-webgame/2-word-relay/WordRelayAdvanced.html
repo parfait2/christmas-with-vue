@@ -1,0 +1,124 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>끝말잇기</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuex@3.6.2/dist/vuex.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="root">
+    <!-- WordRelay 컴포넌트 -->
+    <word-relay></word-relay>
+</div>
+<script>
+    // Vuex 스토어 생성
+    const store = new Vuex.Store({
+        state: {
+            currentWord: '제로초', // 현재 단어, Vuex 스토어에서 관리하여 컴포넌트 간 상태 공유
+        },
+        mutations: {
+            // mutation을 통해 단어 업데이트
+            updateWord(state, newWord) {
+                state.currentWord = newWord; // 단어 업데이트
+            },
+        },
+        actions: {
+            async validateWord(context, word) {
+                try {
+                    // 서버로 단어 유효성 검증 요청, 추후 한국어 단어 사전 API 사용 가능
+                    const response = await axios.post('http://localhost:3000/api/validate-word', { word });
+                    return response.data.valid; // 서버에서 반환된 유효성 결과
+                } catch (error) {
+                    console.error('단어 유효성 검증 중 오류:', error);
+                    return false; // 오류 발생 시 유효하지 않음으로 처리
+                }
+            },
+        },
+    });
+    // WordRelay 컴포넌트 정의
+    Vue.component('wordRelay', {
+        template: `
+          <div class="word-relay">
+              <div class="current-word">현재 단어: <strong>{{ currentWord }}</strong></div>
+              <div class="timer">남은 시간: {{ timeLeft }}초</div>
+              <form v-on:submit.prevent="onSubmitForm">
+                  <input type="text" v-model="value" ref="answer" placeholder="단어를 입력하세요" />
+                  <button type="submit" :disabled="timeLeft === 0">입력!</button>
+              </form>
+              <div class="result" :class="{ fail: result === '땡' }">{{ result }}</div>
+          </div>
+        `,
+        computed: {
+            currentWord() {
+                return this.$store.state.currentWord; // Vuex 상태에서 현재 단어 가져오기
+            },
+        },
+        data() {
+            return {
+                value: '', // 사용자 입력 값
+                result: '', // 결과 메시지
+                timeLeft: 10, // 제한 시간(초)
+            };
+        },
+        methods: {
+            async onSubmitForm() {
+                // 끝말잇기 규칙 확인
+                if (this.currentWord[this.currentWord.length - 1] !== this.value[0]) {
+                    this.result = '땡'; // 끝말잇기 규칙 위반
+                    this.resetInput();
+                    return;
+                }
+
+                // 단어 유효성 검증
+                const isValid = await this.$store.dispatch('validateWord', this.value);
+                if (!isValid) {
+                    this.result = '땡! 유효하지 않은 단어입니다.'; // 유효하지 않은 단어 처리
+                    this.resetInput();
+                    return;
+                }
+
+                // 성공 처리
+                this.result = '딩동댕';
+                this.$store.commit('updateWord', this.value); // Vuex 상태 업데이트
+                this.resetInput();
+            },
+            resetInput() {
+                this.value = ''; // 입력 필드 초기화
+                this.$refs.answer.focus(); // 입력 필드에 포커스
+                this.resetTimer(); // 사용자가 입력할 때마다 타이머 초기화
+            },
+            resetTimer() {
+                this.timeLeft = 10; // 제한 시간을 다시 10초로 초기화
+            },
+            startTimer() {
+                this.timer = setInterval(() => {
+                    if (this.timeLeft > 0) {
+                        this.timeLeft--;
+                    } else {
+                        this.result = '땡! 시간 초과!'; // 제한 시간(10초)을 초과하면 자동으로 실패 처리
+                        this.resetInput();
+                    }
+                }, 1000);
+            },
+        },
+        mounted() {
+            this.startTimer(); // 컴포넌트가 마운트되면 타이머 시작
+        },
+        beforeDestroy() {
+            clearInterval(this.timer); // 컴포넌트가 파괴되기 전 타이머 정리
+        },
+    });
+
+    // Vue 애플리케이션 생성
+    new Vue({
+        el: '#root',
+        store, // Vuex 스토어 등록
+    });
+</script>
+</body>
+</html>

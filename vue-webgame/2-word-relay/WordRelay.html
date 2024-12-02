@@ -1,0 +1,67 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>끝말잇기</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="root">
+    <!-- WordRelay 컴포넌트를 여러 개 사용하여 각 컴포넌트가 다른 시작 단어를 가짐. -->
+    <word-relay start-word="제로초"></word-relay>
+    <word-relay start-word="초밥"></word-relay>
+    <word-relay start-word="바보"></word-relay>
+</div>
+<script>
+    Vue.component('wordRelay', { // 전역 컴포넌트, 끝말잇기 게임의 로직과 UI를 개별 컴포넌트로 캡슐화
+        // 컴포넌트 템플릿: HTML과 Vue 디렉티브로 구성
+        template: `
+          <div>
+          <div>{{ word }}</div> <!-- 현재 단어를 화면에 표시 -->
+          <form v-on:submit="onSubmitForm">
+
+            <!-- ref="answer" : 입력 필드에 대한 참조를 생성해 focus() 메서드에서 사용 -->
+            <!-- v-model="value" : 입력 필드와 value 데이터를 양방향 바인딩 -->
+            <input type="text" ref="answer" v-model="value">
+            <button type="submit">입력!</button>
+          </form>
+          <div>{{ result }}</div>
+          </div>
+        `,
+        props: ['startWord'],         // 부모 컴포넌트에서 전달된 props 설정
+        data() {                      // 컴포넌트 내부 상태를 관리하는 data 함수
+            return {
+                word: this.startWord, // 현재 단어: props로 전달된 시작 단어
+                result: '',           // 결과 메시지 ('딩동댕' 또는 '땡')
+                value: '',            // 사용자 입력 값
+            };
+        },
+        methods: {
+            onSubmitForm(e) {         // 폼 제출 이벤트 핸들러
+                e.preventDefault();   // 폼의 기본 제출 동작을 막음
+
+                // 현재 단어의 마지막 글자와 입력한 단어의 첫 글자가 같은지 확인
+                if (this.word[this.word.length - 1] === this.value[0]) {
+                    this.result = '딩동댕';
+                    this.word = this.value;         // 현재 단어를 새로운 단어로 업데이트
+                    this.value = '';                // 입력 필드 초기화
+                    this.$refs.answer.focus();      // 입력 필드로 포커스 이동
+                } else {
+                    this.result = '땡';
+                    this.value = '';
+                    this.$refs.answer.focus();
+                }
+            },
+        }
+    })
+</script>
+<script>
+    // Vue.js 애플리케이션 인스턴스 생성
+    const app = new Vue({
+        el: '#root', // HTML의 루트 엘리먼트 ID와 연결(애플리케이션이 HTML에서 #root를 루트로 삼아 렌더링)
+    });
+</script>
+</body>
+</html>
