@@ -58,6 +58,14 @@ Vue 파일과 JavaScript를 번들링해서 `dist/app.js`로 출력
 1. 프로젝트 디렉토리에서 의존성 설치 :
    ```bash
    npm install
+   npm i webpack webpack-cli -D
+   npm i vue-loader -D
+   npm i vue-template-compiler -D
+   ```
+   
+   오류 발생 시 vue와 vue-template-compiler 일치시키기
+   ```bash
+   npm i vue@2.7.16
    ```
 
 2. Webpack으로 빌드 :
