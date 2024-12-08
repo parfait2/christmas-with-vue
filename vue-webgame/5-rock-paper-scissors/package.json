@@ -2,18 +2,24 @@
   "name": "response-check",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "build": "webpack --watch",
-    "dev": "webpack-dev-server --hot"
+    "build": "webpack --watch --config webpack.prod.js",
+    "dev": "webpack-dev-server --hot --config webpack.dev.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "vue": "^2.6.12"
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "vue": "^2.6.12",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "css-loader": "^4.2.2",
+    "eslint": "^9.16.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "html-webpack-plugin": "^5.6.3",
+    "prettier": "^3.4.2",
     "vue-loader": "^15.9.3",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.12",
