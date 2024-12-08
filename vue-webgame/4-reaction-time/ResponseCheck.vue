@@ -4,8 +4,8 @@
     <div id="screen" :class="state" @click="onClickScreen">{{message}}</div>
     <!-- 결과가 있을 경우 평균 시간 표시 및 리셋 버튼 -->
     <template v-if="result.length">
-      <div>평균 시간: {{average}}ms</div>
-      <button @click="onReset">리셋</button>
+      <div>평균 시간 : {{average}}ms</div>
+      <button @click="onReset">Reset</button>
     </template>
   </div>
 </template>
@@ -31,6 +31,7 @@
     methods: {
       onReset() {
         this.result = [];
+        localStorage.removeItem('reactionTimes'); // 로컬 스토리지에서 기록 삭제
       },
       onClickScreen() {
         if (this.state === 'waiting') {
@@ -41,6 +42,7 @@
             this.state = 'now';
             this.message = '지금 클릭!';
             startTime = new Date();
+            new Audio('/MP_Blop.mp3').play(); // 소리 재생
           }, Math.floor(Math.random() * 1000) + 2000); // 2~3초 대기 후 초록색 상태
         } else if (this.state === 'ready') {
           // 너무 일찍 클릭했을 때
@@ -53,9 +55,17 @@
           this.state = 'waiting';
           this.message = '클릭해서 시작하세요.';
           this.result.push(endTime - startTime);
+          localStorage.setItem('reactionTimes', JSON.stringify(this.result)); // 로컬 스토리지에 저장
         }
       }
     },
+    created() {
+      // 컴포넌트가 생성될 때 로컬 스토리지에서 데이터 불러오기
+      const savedResults = localStorage.getItem('reactionTimes');
+      if (savedResults) {
+        this.result = JSON.parse(savedResults);
+      }
+    }
   };
 </script>
 
